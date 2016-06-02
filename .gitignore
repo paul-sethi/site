@@ -1,1 +1,4 @@
 main/SECRET.py
+*.pyc
+*.log
+/db.sqlite3
