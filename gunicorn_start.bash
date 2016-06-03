@@ -8,6 +8,7 @@ GROUP=webserver                                     # the group to run as
 NUM_WORKERS=3                                     # how many worker processes should Gunicorn spawn
 DJANGO_SETTINGS_MODULE=main.settings             # which settings file should Django use
 DJANGO_WSGI_MODULE=main.wsgi                     # WSGI module name
+PIDFILE=/run/gunicorn.pid
 
 echo "Starting $NAME as `whoami`"
 
@@ -25,4 +26,5 @@ exec gunicorn ${DJANGO_WSGI_MODULE}:application \
   --user=$USER --group=$GROUP \
   --bind=unix:$SOCKFILE \
   --log-level=debug \
-  --log-file=-
+  --log-file=- \
+  --pid $PIDFILE
