@@ -1,0 +1,3 @@
+-hover on mobile dropdown menu background color wrong
+-media sizing wrong (can see wrapping on nav bar before turning into dropdown menu, ~600px)
+-can also shrink banner text size for mobile. use rem for sizing on everything probably
