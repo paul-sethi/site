@@ -1,0 +1,46 @@
+﻿body
+{
+    background-color:lavender;
+
+}
+
+
+#handGrid {
+    width: auto;
+}
+#handGrid button{
+    font-family: 'Browallia New';
+    font-weight: bold;
+    font-size: 1.5rem;
+    width: 4.5rem;
+}
+
+#handGrid button:hover{
+    border: 2px solid #f44336;
+}
+
+/*
+.pocketPair {
+    background-color: mediumseagreen;
+}
+
+.offsuit{
+    background-color: crimson;
+}
+
+.suited {
+    background-color: cornflowerblue;
+} */
+
+
+.pocketPair {
+color:#fff !important; background-color:#999999 !important;
+}
+
+.offsuit{
+    color:#fff ; background-color:#000000;
+}
+
+.suited {
+    color:#000 !important; background-color:#f0f0f0 !important;
+}
