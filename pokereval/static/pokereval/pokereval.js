@@ -1,28 +1,46 @@
-var isMouseDown = false;
+var mouseIsDown = false;
+var handDictionary = Object.create(null); // this is a true dictionary that has no prototype
+var cards = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"];
+
 document.addEventListener("DOMContentLoaded", function (event) {
     //document.body.appendChild("<button> blah </button>");
 
     setupHandGrid();
-
+	
+	document.addEventListener("mousedown", function() {mouseIsDown = true;});
+	document.addEventListener("mouseup", function() {mouseIsDown = false;});
+	document.addEventListener("mouseup", updateRangeSelection);
+	document.getElementById("me").addEventListener("click", asyncTest);
+	document.getElementById("clear").addEventListener("click", clearAllSelectedHands);
 
 });
 
+function asyncTest() {
+	document.getElementById("me").innerHTML = "Loading...";
+	var request = new XMLHttpRequest();
+	request.onreadystatechange = asyncHandler(request);
+	request.open('POST', '/pokereval/eval/', true);
+	request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	
+	
+	request.send("asdf=ATs");
+}
+
+function asyncHandler(xhttp) {
+	return function() {
+		if (xhttp.readyState == 4 && xhttp.status == 200)
+		{
+		}
+	};
+}
 
 function setupHandGrid() {
-    var cards = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"];
     var elements = new Array(cards.length);
     var allHandElements = new Array(cards.length);
     for (var i = 0; i < cards.length; i++) {
         allHandElements[i] = new Array(cards.length);
         //allHandElements[i][0] = "<tr>"
         for (var j = 0; j < cards.length; j++) {
-            if (j == 0) {
-                allHandElements[i][0] = "<tr>"
-            }
-            else {
-                allHandElements[i][j] = ""
-            }
-
             var handText = "";
             var suited = "";
             var cssClass = "";
@@ -53,25 +71,181 @@ function setupHandGrid() {
                 cssClass = "offsuit"
 
             }
+			var handObject = {
+				"row": i,
+				"column": j,
+				"isSelected": false,
+				"cssClass": cssClass
+			}
 
-            //if (!allHandElements[i][j]) {
-            //    allHandElements[i][j] = ""
-            //}
-
-            allHandElements[i][j] += "<td><button class=" + cssClass + ">" + handText + "</button></td>"
-
-            if (j == (cards.length - 1)) {
-                //allHandElements[i][j] += "</tr>"
-            }
-
+			handDictionary[handText] = handObject;
+			//create handText to object dictionary (store selected, possibly row/col)
+			//need to handle onmousedown also (otherwise click + drag only works for element next to first clicked),itd
+			
+			//set id, class, mousedown, mouseover variables and concatenate with variables instead of this long string (just for readability)
+            allHandElements[i][j] = "<td><button id=\"" + handText + "\" class=\"" + cssClass + "\"" + " onmousedown=\"mousedownHand(this);\" onmouseover=\"mouseoverHand(this);\">" + handText + "</button></td>"
+			// I decided to use inline javascript events so I didn't have to add event listeners to all these button elements immediately after setting the innerHTML.
+			// Furthermore, since these are dynamically created elements in a loop, we shouldn't have any issues with maintainability - but I do understand that, in
+			// general, we want to separate javascript behavior from the markup.
         }
 
-        allHandElements[i][cards.length - 1] += "</tr>";
-        //document.getElementById("handGridblah").innerHTML += allHandElements[i].join("");
-
-        elements[i] = allHandElements[i].join("")
+        elements[i] = "<tr>" + allHandElements[i].join("") + "</tr>";
     }
-
-    document.getElementById("handGrid").innerHTML = elements.join("")
+    document.getElementById("handGrid").innerHTML = elements.join("");
+	//var all
+	//document.querySelectorAll("#handGrid button").addEventListener("click", function(){alert("asdf");});
+	//document.getElementById("handGrid").innerHTML = elements.join("")
 }
 
+function clearAllSelectedHands() {
+	for (var hand in handDictionary) {
+		var handObj = handDictionary[hand];
+		if (handObj.isSelected) {
+			deselectHand(document.getElementById(hand), handObj);
+		}
+	}
+}
+
+function mousedownHand(handElement) {
+	flipHandSelection(handElement);
+}
+
+function mouseoverHand(handElement) {
+	if (mouseIsDown) {
+		flipHandSelection(handElement);
+	}
+}
+
+function flipHandSelection(handElement) {
+	var handObject = handDictionary[handElement.id];
+
+	if (handObject.isSelected)
+	{
+		deselectHand(handElement, handObject);
+	}
+	else
+	{
+		selectHand(handElement, handObject);
+	}
+
+	//updateRangeSelection(handObject);
+}
+
+function deselectHand(handElement, handObject) {
+	handObject.isSelected = false;
+	handElement.className = handObject.cssClass;
+}
+
+function selectHand(handElement, handObject) {
+	handObject.isSelected = true;
+	handElement.className = "handSelected";
+}
+
+//add event listener for mouseUp to update range selection!
+function updateRangeSelection() {
+	// there is likely a smarter way to do this, but recalculating the entire row or entire hand range is a bit more straight forward
+	var allHands = getPocketPairs();
+	allHands += getSuitedCards();
+	//allHands += getOffsuitCards();
+	document.getElementById("range").innerHTML = allHands;
+}
+
+//TODO: this function needs to handle continuous selections
+//TODO: implement getOffsuitCards()
+function getPocketPairs() {
+	var allPocketPairs = "";
+	for (var i = 0; i < cards.length; i++) {
+		var handText = cards[i] + cards[i]; // pocket pairs have two of the same hand values without a suit character attached
+		handObj = handDictionary[handText];
+		if (handObj.isSelected) {
+			allPocketPairs += handText;
+		}
+	}
+	return allPocketPairs;
+}
+
+//TODO: this is definitely broken
+function getSuitedCards() {
+	var allSuitedCards = "";
+	for (var i = 0; i < cards.length; i++) {
+		var continuousSelection = false;
+		var continuousSelectionStart;
+		var continuousSelectionEnd;
+		for (var j = i + 1; j < cards.length; j++) { // we want to get all hands to the right of the pocket pairs (located when row=column)
+			var handText = cards[i] + cards[j] + "s";
+			handObj = handDictionary[handText];
+
+			if (handObj.isSelected) {
+				if (continuousSelection) {
+					continuousSelectionEnd = j;
+				}
+				else {
+					continuousSelection = true;
+					continuousSelectionStart = j;
+					continousSelectionEnd = continuousSelectionStart;
+				}
+			}
+			else {
+				if (continuousSelection) {
+					continuousSelection = false;
+					if (allSuitedCards != "") {
+						allSuitedCards += ",";
+					}
+					
+					if (continuousSelectionStart == continuousSelectionEnd) {
+						allSuitedCards += cards[i] + cards[continuousSelectionStart]  + "s";
+					}
+					else {
+						allSuitedCards += cards[i] + cards[continuousSelectionEnd] + "-" + cards[i] + cards[continuousSelectionStart] + "s";
+					}
+				}
+			}
+		}
+	}
+	return allSuitedCards;
+}
+
+/*
+function selectHand(handElement) {
+	if (isMouseDown)
+	{
+		if (handDictionary[handElement.id].selected)
+		{
+				handDictionary[handElement.id].selected = false;
+				handElement.className = handDictionary[handElement.id].cssClass;
+		}
+		else
+		{
+			handDictionary[handElement.id].selected = true;
+			handElement.className = "handSelected";
+		}
+	}
+}
+*/
+
+/*
+function getHand
+function getSuitedness(row, column) {
+	
+	return {"suitText": 
+}
+
+stuff.myEnum {
+function cardToRow(card)
+{
+	
+}
+*/
+
+/*
+var CardEnum = {
+	2: 0,
+	3: 1,
+	4: 2,
+	4: 2,
+	4: 2,
+	4: 2,
+	4: 2,
+}*/
+
+// card text dictionary to card object (row/column/selected bool)

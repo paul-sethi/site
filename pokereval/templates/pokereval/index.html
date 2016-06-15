@@ -3,14 +3,19 @@
 
 {% block title %}Poker Hand Range Evaluator - Paul-Sethi.com{% endblock %}
 {% block head %}
- <link rel="stylesheet" href="{% static 'pokereval/main.css' %}"/>
+<link rel="stylesheet" href="{% static 'pokereval/main.css' %}"/>
 {% endblock %}
 {% block body %}
 
+<div class="w3-padding-64 w3-theme">
 <h1> Sup dawg </h1>
 <div id="handGridblah" class="handTable">
     <table id="handGrid"></table>
 </div>
+<button id="me"> Click Me </button>
+<button id="clear"> Clear Me </button>
+<span id="range">asdfasdf</span>
 <script src="{% static 'pokereval/pokereval.js' %}"></script>
+</div>
 
 {% endblock %}

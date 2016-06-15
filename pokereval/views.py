@@ -11,3 +11,9 @@ def index(request):
 		return HttpResponse(str(r))
 	else:
 		return HttpResponse("error")
+
+def evaluator(request):
+	response = HttpResponse("blah")
+	response.status=200
+	return HttpResponse("blah");
+	
