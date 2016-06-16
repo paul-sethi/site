@@ -91,16 +91,16 @@ function clearAllSelectedHands() {
 }
 
 function mousedownHand(handElement) {
-    flipHandSelection(handElement);
+    invertHandSelection(handElement);
 }
 
 function mouseoverHand(handElement) {
     if (mouseIsDown) {
-        flipHandSelection(handElement);
+        invertHandSelection(handElement);
     }
 }
 
-function flipHandSelection(handElement) {
+function invertHandSelection(handElement) {
     var handObject = handDictionary[handElement.id];
 
     if (handObject.isSelected) {
@@ -146,39 +146,42 @@ function getPocketPairs() {
     return allPocketPairs;
 }
 
-//TODO: this is definitely broken
+
+
+// Simplifies the list of suited hands by grouping them consecutively by row. For example ATs-A7s is the same as ATs, A9s, A8s and A7s.
 function getSuitedCards() {
     var allSuitedCards = "";
     for (var row = 0; row < cards.length; row++) {
-        var continuousSelection = false;
-        var continuousSelectionStart;
-        var continuousSelectionEnd;
-        for (var column = row + 1; column < cards.length; column++) { // we want to get all hands to the right of the pocket pairs (located when row=column)
+        var isConsecutive = false;
+        var consecStart;
+        var consecEnd;
+        
+        for (var column = row + 1; column < cards.length; column++) { // all suited hands are located in the upper right half of the grid
             var handText = cards[row] + cards[column] + "s";
             var handObject = handDictionary[handText];
 
             if (handObject.isSelected) {
-                if (continuousSelection) {
-                    continuousSelectionEnd = column;
+                if (isConsecutive) {
+                    consecEnd = column;
                 }
                 else {
-                    continuousSelection = true;
-                    continuousSelectionStart = column;
-                    continuousSelectionEnd = continuousSelectionStart;
+                    isConsecutive = true;
+                    consecStart = column;
+                    consecEnd = consecStart;
                 }
             }
             else {
-                if (continuousSelection) {
-                    continuousSelection = false;
+                if (isConsecutive) {
+                    isConsecutive = false;
                     if (allSuitedCards != "") {
                         allSuitedCards += ", ";
                     }
 
-                    if (continuousSelectionStart == continuousSelectionEnd) {
-                        allSuitedCards += cards[row] + cards[continuousSelectionStart] + "s";
+                    if (consecStart == consecEnd) {
+                        allSuitedCards += cards[row] + cards[consecStart] + "s";
                     }
                     else {
-                        allSuitedCards += cards[row] + cards[continuousSelectionStart] + "s-" + cards[row] + cards[continuousSelectionEnd] + "s";
+                        allSuitedCards += cards[row] + cards[consecStart] + "s-" + cards[row] + cards[consecEnd] + "s";
                     }
                 }
             }
