@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
     document.addEventListener("mousedown", function () { mouseIsDown = true; });
     document.addEventListener("mouseup", function () { mouseIsDown = false; });
     document.addEventListener("mouseup", updateRangeSelection);
-    document.getElementById("me").addEventListener("click", asyncTest);
+    document.getElementById("calc").addEventListener("click", asyncTest);
     document.getElementById("clear").addEventListener("click", clearAllSelectedHands);
 
 });
