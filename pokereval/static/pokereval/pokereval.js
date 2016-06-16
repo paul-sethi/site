@@ -14,12 +14,12 @@ document.addEventListener("DOMContentLoaded", function (event) {
 });
 
 function asyncTest() {
-    document.getElementById("me").innerHTML = "Loading...";
+    document.getElementById("result").innerHTML = "Loading...";
     var request = new XMLHttpRequest();
     request.onreadystatechange = asyncHandler(request);
     request.open('POST', '/pokereval/eval/', true);
     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    request.send("asdf=ATs");
+    request.send("handRange=" + document.getElementById("range").innerHTML.replace(/ /g,''));
 }
 
 function asyncHandler(xhttp) {
