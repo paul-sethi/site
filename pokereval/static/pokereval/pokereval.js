@@ -19,7 +19,7 @@ function asyncTest() {
     request.onreadystatechange = asyncHandler(request);
     request.open('POST', '/pokereval/eval/', true);
     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    request.send("handRange=" + document.getElementById("range").innerHTML.replace(/ /g,''));
+    request.send(document.getElementById("range").innerHTML.replace(/ /g,''));
 }
 
 function asyncHandler(xhttp) {
