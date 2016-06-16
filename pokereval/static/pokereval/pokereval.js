@@ -14,12 +14,18 @@ document.addEventListener("DOMContentLoaded", function (event) {
 });
 
 function asyncTest() {
+	var handRange = document.getElementById("range").innerHTML.replace(/ /g,'');
+
+	if (handRange == 'None') {
+		return;
+	}
+
     document.getElementById("result").innerHTML = "Loading...";
     var request = new XMLHttpRequest();
     request.onreadystatechange = asyncHandler(request);
     request.open('POST', '/pokereval/eval/', true);
     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    request.send(document.getElementById("range").innerHTML.replace(/ /g,''));
+	request.send(handRange);
 }
 
 function asyncHandler(xhttp) {
@@ -132,6 +138,9 @@ function updateRangeSelection() {
     var allHands = getPocketPairs();
     allHands += getSuitedCards();
     //allHands += getOffsuitCards();
+	if (allHands == "") {
+		allHands = "None";
+	}
     document.getElementById("range").innerHTML = allHands;
 }
 
