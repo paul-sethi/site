@@ -186,14 +186,14 @@ function getSuitedCards() {
 				if (continuousSelection) {
 					continuousSelection = false;
 					if (allSuitedCards != "") {
-						allSuitedCards += ",";
+						allSuitedCards += ", ";
 					}
 
 					if (continuousSelectionStart == continuousSelectionEnd) {
 						allSuitedCards += cards[row] + cards[continuousSelectionStart] + "s";
 					}
 					else {
-						allSuitedCards += cards[row] + cards[continuousSelectionEnd] + "-" + cards[row] + cards[continuousSelectionStart] + "s";
+						allSuitedCards += cards[row] + cards[continuousSelectionStart] + "s-" + cards[row] + cards[continuousSelectionEnd] + "s";
 				    }
 				}
 			}
