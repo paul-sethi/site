@@ -3,12 +3,12 @@ var handDictionary = Object.create(null); // this is a true dictionary that has 
 var cards = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"];
 
 document.addEventListener("DOMContentLoaded", function (event) {
-    //document.body.appendChild("<button> blah </button>");
+	//document.body.appendChild("<button> blah </button>");
 
-    setupHandGrid();
-	
-	document.addEventListener("mousedown", function() {mouseIsDown = true;});
-	document.addEventListener("mouseup", function() {mouseIsDown = false;});
+	setupHandGrid();
+
+	document.addEventListener("mousedown", function () { mouseIsDown = true; });
+	document.addEventListener("mouseup", function () { mouseIsDown = false; });
 	document.addEventListener("mouseup", updateRangeSelection);
 	document.getElementById("me").addEventListener("click", asyncTest);
 	document.getElementById("clear").addEventListener("click", clearAllSelectedHands);
@@ -21,56 +21,55 @@ function asyncTest() {
 	request.onreadystatechange = asyncHandler(request);
 	request.open('POST', '/pokereval/eval/', true);
 	request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	
-	
+
+
 	request.send("asdf=ATs");
 }
 
 function asyncHandler(xhttp) {
-	return function() {
-		if (xhttp.readyState == 4 && xhttp.status == 200)
-		{
+	return function () {
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
 		}
 	};
 }
 
 function setupHandGrid() {
-    var elements = new Array(cards.length);
-    var allHandElements = new Array(cards.length);
-    for (var i = 0; i < cards.length; i++) {
-        allHandElements[i] = new Array(cards.length);
-        //allHandElements[i][0] = "<tr>"
-        for (var j = 0; j < cards.length; j++) {
-            var handText = "";
-            var suited = "";
-            var cssClass = "";
-            if (i < j) {
+	var elements = new Array(cards.length);
+	var allHandElements = new Array(cards.length);
+	for (var i = 0; i < cards.length; i++) {
+		allHandElements[i] = new Array(cards.length);
+		//allHandElements[i][0] = "<tr>"
+		for (var j = 0; j < cards.length; j++) {
+			var handText = "";
+			var suited = "";
+			var cssClass = "";
+			if (i < j) {
 
-                suited = "s";
-                // it is convention to display the higher card first
-                handText = cards[i] + cards[j] + suited;
-                cssClass = "suited"
+				suited = "s";
+				// it is convention to display the higher card first
+				handText = cards[i] + cards[j] + suited;
+				cssClass = "suited"
 
-            }
-
-
-            else if (i == j) {
-
-                // we don't want to display the suit character with pocket pairs
-
-                handText = cards[i] + cards[j];
-                cssClass = "pocketPair"
-            }
+			}
 
 
-            else if (i > j) {
+			else if (i == j) {
 
-                suited = "o"
+				// we don't want to display the suit character with pocket pairs
 
-                handText = cards[j] + cards[i] + suited;
-                cssClass = "offsuit"
+				handText = cards[i] + cards[j];
+				cssClass = "pocketPair"
+			}
 
-            }
+
+			else if (i > j) {
+
+				suited = "o"
+
+				handText = cards[j] + cards[i] + suited;
+				cssClass = "offsuit"
+
+			}
 			var handObject = {
 				"row": i,
 				"column": j,
@@ -81,17 +80,17 @@ function setupHandGrid() {
 			handDictionary[handText] = handObject;
 			//create handText to object dictionary (store selected, possibly row/col)
 			//need to handle onmousedown also (otherwise click + drag only works for element next to first clicked),itd
-			
+
 			//set id, class, mousedown, mouseover variables and concatenate with variables instead of this long string (just for readability)
-            allHandElements[i][j] = "<td><button id=\"" + handText + "\" class=\"" + cssClass + "\"" + " onmousedown=\"mousedownHand(this);\" onmouseover=\"mouseoverHand(this);\">" + handText + "</button></td>"
+			allHandElements[i][j] = "<td><button id=\"" + handText + "\" class=\"" + cssClass + "\"" + " onmousedown=\"mousedownHand(this);\" onmouseover=\"mouseoverHand(this);\">" + handText + "</button></td>"
 			// I decided to use inline javascript events so I didn't have to add event listeners to all these button elements immediately after setting the innerHTML.
 			// Furthermore, since these are dynamically created elements in a loop, we shouldn't have any issues with maintainability - but I do understand that, in
 			// general, we want to separate javascript behavior from the markup.
-        }
+		}
 
-        elements[i] = "<tr>" + allHandElements[i].join("") + "</tr>";
-    }
-    document.getElementById("handGrid").innerHTML = elements.join("");
+		elements[i] = "<tr>" + allHandElements[i].join("") + "</tr>";
+	}
+	document.getElementById("handGrid").innerHTML = elements.join("");
 	//var all
 	//document.querySelectorAll("#handGrid button").addEventListener("click", function(){alert("asdf");});
 	//document.getElementById("handGrid").innerHTML = elements.join("")
@@ -119,12 +118,10 @@ function mouseoverHand(handElement) {
 function flipHandSelection(handElement) {
 	var handObject = handDictionary[handElement.id];
 
-	if (handObject.isSelected)
-	{
+	if (handObject.isSelected) {
 		deselectHand(handElement, handObject);
 	}
-	else
-	{
+	else {
 		selectHand(handElement, handObject);
 	}
 
@@ -182,7 +179,7 @@ function getSuitedCards() {
 				else {
 					continuousSelection = true;
 					continuousSelectionStart = column;
-					continousSelectionEnd = continuousSelectionStart;
+					continuousSelectionEnd = continuousSelectionStart;
 				}
 			}
 			else {
@@ -191,13 +188,13 @@ function getSuitedCards() {
 					if (allSuitedCards != "") {
 						allSuitedCards += ",";
 					}
-					
+
 					if (continuousSelectionStart == continuousSelectionEnd) {
-						allSuitedCards += cards[row] + cards[continuousSelectionStart]  + "s";
+						allSuitedCards += cards[row] + cards[continuousSelectionStart] + "s";
 					}
 					else {
 						allSuitedCards += cards[row] + cards[continuousSelectionEnd] + "-" + cards[row] + cards[continuousSelectionStart] + "s";
-					}
+				    }
 				}
 			}
 		}
