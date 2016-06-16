@@ -156,8 +156,8 @@ function getPocketPairs() {
 	var allPocketPairs = "";
 	for (var i = 0; i < cards.length; i++) {
 		var handText = cards[i] + cards[i]; // pocket pairs have two of the same hand values without a suit character attached
-		handObj = handDictionary[handText];
-		if (handObj.isSelected) {
+		var handObject = handDictionary[handText];
+		if (handObject.isSelected) {
 			allPocketPairs += handText;
 		}
 	}
@@ -167,21 +167,21 @@ function getPocketPairs() {
 //TODO: this is definitely broken
 function getSuitedCards() {
 	var allSuitedCards = "";
-	for (var i = 0; i < cards.length; i++) {
+	for (var row = 0; row < cards.length; row++) {
 		var continuousSelection = false;
 		var continuousSelectionStart;
 		var continuousSelectionEnd;
-		for (var j = i + 1; j < cards.length; j++) { // we want to get all hands to the right of the pocket pairs (located when row=column)
-			var handText = cards[i] + cards[j] + "s";
-			handObj = handDictionary[handText];
+		for (var column = row + 1; column < cards.length; column++) { // we want to get all hands to the right of the pocket pairs (located when row=column)
+			var handText = cards[row] + cards[column] + "s";
+			var handObject = handDictionary[handText];
 
 			if (handObj.isSelected) {
 				if (continuousSelection) {
-					continuousSelectionEnd = j;
+					continuousSelectionEnd = column;
 				}
 				else {
 					continuousSelection = true;
-					continuousSelectionStart = j;
+					continuousSelectionStart = column;
 					continousSelectionEnd = continuousSelectionStart;
 				}
 			}
@@ -193,10 +193,10 @@ function getSuitedCards() {
 					}
 					
 					if (continuousSelectionStart == continuousSelectionEnd) {
-						allSuitedCards += cards[i] + cards[continuousSelectionStart]  + "s";
+						allSuitedCards += cards[row] + cards[continuousSelectionStart]  + "s";
 					}
 					else {
-						allSuitedCards += cards[i] + cards[continuousSelectionEnd] + "-" + cards[i] + cards[continuousSelectionStart] + "s";
+						allSuitedCards += cards[row] + cards[continuousSelectionEnd] + "-" + cards[row] + cards[continuousSelectionStart] + "s";
 					}
 				}
 			}
