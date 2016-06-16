@@ -89,6 +89,8 @@ function clearAllSelectedHands() {
             deselectHand(document.getElementById(hand), handObject);
         }
     }
+    document.getElementById("range").innerHTML = "None";
+    document.getElementById("result").innerHTML = "None";
 }
 
 function mousedownHand(handElement) {
