@@ -147,7 +147,7 @@ function updateRangeSelection() {
 	var allHands = getPocketPairs();
 	allHands += getSuitedCards();
 	//allHands += getOffsuitCards();
-	document.getElementById("range").innerHTML = "testing";//allHands;
+	document.getElementById("range").innerHTML = allHands;
 }
 
 //TODO: this function needs to handle continuous selections
