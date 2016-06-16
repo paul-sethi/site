@@ -99,9 +99,9 @@ function setupHandGrid() {
 
 function clearAllSelectedHands() {
 	for (var hand in handDictionary) {
-		var handObj = handDictionary[hand];
-		if (handObj.isSelected) {
-			deselectHand(document.getElementById(hand), handObj);
+		var handObject = handDictionary[hand];
+		if (handObject.isSelected) {
+			deselectHand(document.getElementById(hand), handObject);
 		}
 	}
 }
@@ -175,7 +175,7 @@ function getSuitedCards() {
 			var handText = cards[row] + cards[column] + "s";
 			var handObject = handDictionary[handText];
 
-			if (handObj.isSelected) {
+			if (handObject.isSelected) {
 				if (continuousSelection) {
 					continuousSelectionEnd = column;
 				}
