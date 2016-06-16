@@ -13,7 +13,10 @@ def index(request):
 		return HttpResponse("error")
 
 def evaluator(request):
-	response = HttpResponse("blah")
-	response.status=200
-	return HttpResponse("blah");
+	# TODO: need to check if hand range (request body) is null, and also insert ALL hands for second range
+	result = pbots_calc.calc(request.body + ":ATs","","",1000000)
+	if result:
+		return HttpResponse(str(result))
+	else:
+		return HttpResponse("error")
 	
