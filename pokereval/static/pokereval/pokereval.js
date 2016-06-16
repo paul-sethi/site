@@ -25,6 +25,7 @@ function asyncTest() {
 function asyncHandler(xhttp) {
     return function () {
         if (xhttp.readyState == 4 && xhttp.status == 200) {
+            document.getElementById("result").innerHTML = xhttp.responseText;
         }
     };
 }
