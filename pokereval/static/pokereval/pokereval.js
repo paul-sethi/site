@@ -181,11 +181,14 @@ function getSuitedCards() {
                     consecStart = column;
                     consecEnd = consecStart;
                 }
+				if (column == cards.length - 1) {
+					allSuitedCards = getConsecCards(allSuitedCards, row, consecStart, consecEnd, "s");
+				}
             }
             else {
                 if (isConsecutive) {
                     isConsecutive = false;
-                    if (allSuitedCards != "") {
+                    /*if (allSuitedCards != "") {
                         allSuitedCards += ", ";
                     }
 
@@ -194,12 +197,27 @@ function getSuitedCards() {
                     }
                     else {
                         allSuitedCards += cards[row] + cards[consecStart] + "s-" + cards[row] + cards[consecEnd] + "s";
-                    }
+                    } */
+					allSuitedCards = getConsecCards(allSuitedCards, row, consecStart, consecEnd, "s");
                 }
             }
         }
     }
     return allSuitedCards;
+}
+
+function getConsecCards(currentCards, row, consecStart, consecEnd, suitedChar) {
+	if (currentCards != "") {
+		currentCards += ", ";
+	}
+
+	if (consecStart == consecEnd) {
+		currentCards += cards[row] + cards[consecStart] + suitedChar;
+	}
+	else {
+		currentCards += cards[row] + cards[consecStart] + suitedChar + "-" + cards[row] + cards[consecEnd] + suitedChar;
+	}
+	return currentCards;
 }
 
 /*
