@@ -147,15 +147,37 @@ function updateRangeSelection() {
 //TODO: this function needs to handle continuous selections
 //TODO: implement getOffsuitCards()
 function getPocketPairs() {
-    var allPocketPairs = "";
+    var allPocketPairs = [];
     for (var i = 0; i < cards.length; i++) {
+        var isConsecutive = false;
+        var consecStart;
+        var consecEnd;
+
         var handText = cards[i] + cards[i]; // pocket pairs have two of the same hand values without a suit character attached
         var handObject = handDictionary[handText];
+
         if (handObject.isSelected) {
-            allPocketPairs += handText;
+            //allPocketPairs += handText;
+            if (isConsecutive) {
+                consecEnd = i;
+            }
+            else {
+                isConsecutive = true;
+                consecStart = i;
+                consecEnd = consecStart;
+            }
+            if (i == cards.length - 1) {
+                allSuitedCards.push(getConsecCards(i, consecStart, consecEnd, ""));
+            }
+        }
+        else {
+            if (isConsecutive) {
+                isConsecutive = false;
+                allSuitedCards.push(getConsecCards(i, consecStart, consecEnd, ""));
+            }
         }
     }
-    return allPocketPairs;
+    return allPocketPairs.join(",");
 }
 
 
@@ -188,16 +210,6 @@ function getSuitedCards() {
             else {
                 if (isConsecutive) {
                     isConsecutive = false;
-                    /*if (allSuitedCards != "") {
-                        allSuitedCards += ", ";
-                    }
-
-                    if (consecStart == consecEnd) {
-                        allSuitedCards += cards[row] + cards[consecStart] + "s";
-                    }
-                    else {
-                        allSuitedCards += cards[row] + cards[consecStart] + "s-" + cards[row] + cards[consecEnd] + "s";
-                    } */
                     allSuitedCards.push(getConsecCards(row, consecStart, consecEnd, "s"));
                 }
             }
