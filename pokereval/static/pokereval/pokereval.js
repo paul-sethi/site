@@ -167,13 +167,13 @@ function getPocketPairs() {
                 consecEnd = consecStart;
             }
             if (i == cards.length - 1) {
-                allSuitedCards.push(getConsecCards(i, consecStart, consecEnd, ""));
+                allPocketPairs.push(getConsecCards(i, consecStart, consecEnd, ""));
             }
         }
         else {
             if (isConsecutive) {
                 isConsecutive = false;
-                allSuitedCards.push(getConsecCards(i, consecStart, consecEnd, ""));
+                allPocketPairs.push(getConsecCards(i, consecStart, consecEnd, ""));
             }
         }
     }
