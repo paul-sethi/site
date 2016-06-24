@@ -162,7 +162,7 @@ function getPocketPairs() {
 
 // Simplifies the list of suited hands by grouping them consecutively by row. For example ATs-A7s is the same as ATs, A9s, A8s and A7s.
 function getSuitedCards() {
-    var allSuitedCards = "";
+    var allSuitedCards = [];
     for (var row = 0; row < cards.length; row++) {
         var isConsecutive = false;
         var consecStart;
@@ -182,7 +182,7 @@ function getSuitedCards() {
                     consecEnd = consecStart;
                 }
 				if (column == cards.length - 1) {
-					allSuitedCards = getConsecCards(allSuitedCards, row, consecStart, consecEnd, "s");
+				    allSuitedCards.push(getConsecCards(row, consecStart, consecEnd, "s"));
 				}
             }
             else {
@@ -198,26 +198,21 @@ function getSuitedCards() {
                     else {
                         allSuitedCards += cards[row] + cards[consecStart] + "s-" + cards[row] + cards[consecEnd] + "s";
                     } */
-					allSuitedCards = getConsecCards(allSuitedCards, row, consecStart, consecEnd, "s");
+                    allSuitedCards.push(getConsecCards(row, consecStart, consecEnd, "s"));
                 }
             }
         }
     }
-    return allSuitedCards;
+    return allSuitedCards.join(",");
 }
 
-function getConsecCards(currentCards, row, consecStart, consecEnd, suitedChar) {
-	if (currentCards != "") {
-		currentCards += ", ";
-	}
-
+function getConsecCards(row, consecStart, consecEnd, suitedChar) {
 	if (consecStart == consecEnd) {
-		currentCards += cards[row] + cards[consecStart] + suitedChar;
+		return cards[row] + cards[consecStart] + suitedChar;
 	}
 	else {
-		currentCards += cards[row] + cards[consecStart] + suitedChar + "-" + cards[row] + cards[consecEnd] + suitedChar;
+		return cards[row] + cards[consecStart] + suitedChar + "-" + cards[row] + cards[consecEnd] + suitedChar;
 	}
-	return currentCards;
 }
 
 /*
