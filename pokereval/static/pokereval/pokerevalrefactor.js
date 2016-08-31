@@ -236,23 +236,30 @@ function getSuitedCards() {
 function organizeSelectedSuitedHands() {
 	var selectedSuitedHands = [];
 	
-	for (var currentRow; currentRow < cards.length; currentRow++) {
-		selectedSuitedHands.push(groupSuitedHandsByRow(currentRow));
+	for (var row = 0; row < cards.length; row++) {
+		selectedSuitedHands.push(groupSuitedHandsBy(row));
 	}
 	
 	return selectedSuitedHands.join(",");
 }
 
-function groupSuitedHandsByRow(currentRow) {
+function groupSuitedHandsBy(row) {
 	var suitedRow = [];
-	var currentHandGroup = [];
+	//var currentHandGroup = [];
+	//var currentHandGroup = "";
+	var consecutiveHandGroup = "";
 	
-	for (var currentCol = currentRow + 1; currentCol < cards.length; currentCol++)
+	for (var column = row + 1; column < cards.length; column++)
 	{
-		var hand = getSuitedHand(currentRow, currentCol);
+		var hand = getSuitedHand(row, column);
 		
 		if (hand.isSelected) {
-			currentHandGroup.push(hand.text);
+
+		    //currentHandGroup.push(hand.text);
+		    if (consecutiveHandGroup == "")
+		    {
+		        consecutiveHandGroup = hand.text;
+		    }
 		}
 		else if (currentHandGroup.length > 0)
 		{
@@ -260,6 +267,10 @@ function groupSuitedHandsByRow(currentRow) {
 			currentHandGroup = [];
 		}
 	}
+}
+
+function getConsecutiveSuitedGroup(row, column) {
+
 }
 
 function getSuitedHand(row, column) {
