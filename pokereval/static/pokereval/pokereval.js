@@ -135,34 +135,72 @@ function selectHand(handElement, handObject) {
 //add event listener for mouseUp to update range selection!
 function updateRangeSelection() {
     // there is likely a smarter way to do this, but recalculating the entire row or entire hand range is a bit more straight forward
-    var allHands = getPocketPairs();
-    allHands += getSuitedCards();
-    //allHands += getOffsuitCards();
-	if (allHands == "") {
-		allHands = "None";
+    var allHands = [];
+    var allHandsJoined;
+    var currentHands;
+    var currentHands = getPocketPairs();
+    if (currentHands) {
+    	allHands.push(currentHands);
+    	currentHands = "";
+    }
+    currentHands = getSuitedCards();
+    if (currentHands) {
+    	allHands.push(currentHands);
+    	currentHands = "";
+    }
+    currentHands = getOffsuitCards();
+    if (currentHands) {
+    	allHands.push(currentHands);
+    	currentHands = "";
+    }
+    
+    allHandsJoined = allHands.join(",");
+	if (!allHandsJoined) {
+		allHandsJoined = "None";
 	}
-    document.getElementById("range").innerHTML = allHands;
+    document.getElementById("range").innerHTML = allHandsJoined;
 }
 
 //TODO: this function needs to handle continuous selections
 //TODO: implement getOffsuitCards()
 function getPocketPairs() {
-    var allPocketPairs = "";
+    var allPocketPairs = [];
+    var isConsecutive = false;
+    var consecStart;
+    var consecEnd;
+        
     for (var i = 0; i < cards.length; i++) {
         var handText = cards[i] + cards[i]; // pocket pairs have two of the same hand values without a suit character attached
         var handObject = handDictionary[handText];
+
         if (handObject.isSelected) {
-            allPocketPairs += handText;
+            if (isConsecutive) {
+                consecEnd = i;
+            }
+            else {
+                isConsecutive = true;
+                consecStart = i;
+                consecEnd = consecStart;
+            }
+            if (i == cards.length - 1) {
+                allPocketPairs.push(getConsecPair(consecStart, consecEnd));
+            }
+        }
+        else {
+            if (isConsecutive) {
+                isConsecutive = false;
+                allPocketPairs.push(getConsecPair(consecStart, consecEnd));
+            }
         }
     }
-    return allPocketPairs;
+    return allPocketPairs.join(",");
 }
 
 
 
 // Simplifies the list of suited hands by grouping them consecutively by row. For example ATs-A7s is the same as ATs, A9s, A8s and A7s.
 function getSuitedCards() {
-    var allSuitedCards = "";
+    var allSuitedCards = [];
     for (var row = 0; row < cards.length; row++) {
         var isConsecutive = false;
         var consecStart;
@@ -181,25 +219,72 @@ function getSuitedCards() {
                     consecStart = column;
                     consecEnd = consecStart;
                 }
+				if (column == cards.length - 1) {
+				    allSuitedCards.push(getConsecCards(row, consecStart, consecEnd, "s"));
+				}
             }
             else {
                 if (isConsecutive) {
                     isConsecutive = false;
-                    if (allSuitedCards != "") {
-                        allSuitedCards += ", ";
-                    }
-
-                    if (consecStart == consecEnd) {
-                        allSuitedCards += cards[row] + cards[consecStart] + "s";
-                    }
-                    else {
-                        allSuitedCards += cards[row] + cards[consecStart] + "s-" + cards[row] + cards[consecEnd] + "s";
-                    }
+                    allSuitedCards.push(getConsecCards(row, consecStart, consecEnd, "s"));
                 }
             }
         }
     }
-    return allSuitedCards;
+    return allSuitedCards.join(",");
+}
+
+function getOffsuitCards() {
+    var allOffsuitCards = [];
+    for (var column = 0; column < cards.length; column++) {
+        var isConsecutive = false;
+        var consecStart;
+        var consecEnd;
+        
+        for (var row = column + 1; row < cards.length; row++) { // all suited hands are located in the upper right half of the grid
+            var handText = cards[column] + cards[row] + "o";
+            var handObject = handDictionary[handText];
+
+            if (handObject.isSelected) {
+                if (isConsecutive) {
+                    consecEnd = row;
+                }
+                else {
+                    isConsecutive = true;
+                    consecStart = row;
+                    consecEnd = consecStart;
+                }
+				if (row == cards.length - 1) {
+				    allOffsuitCards.push(getConsecCards(column, consecStart, consecEnd, "o"));
+				}
+            }
+            else {
+                if (isConsecutive) {
+                    isConsecutive = false;
+                    allOffsuitCards.push(getConsecCards(column, consecStart, consecEnd, "o"));
+                }
+            }
+        }
+    }
+    return allOffsuitCards.join(",");
+}
+
+function getConsecCards(row, consecStart, consecEnd, suitedChar) {
+	if (consecStart == consecEnd) {
+		return cards[row] + cards[consecStart] + suitedChar;
+	}
+	else {
+		return cards[row] + cards[consecStart] + suitedChar + "-" + cards[row] + cards[consecEnd] + suitedChar;
+	}
+}
+
+function getConsecPair(consecStart, consecEnd) {
+	if (consecStart == consecEnd) {
+		return cards[consecStart] + cards[consecStart];
+	}
+	else {
+		return cards[consecStart] + cards[consecStart] + "-" + cards[consecEnd] + cards[consecEnd];
+	}
 }
 
 /*

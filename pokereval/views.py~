@@ -15,7 +15,7 @@ def index(request):
 def evaluator(request):
 	try:
 		# TODO: need to check if hand range (request body) is null, and also insert ALL hands for second range
-		result = pbots_calc.calc(request.body + ":xx","","",1000000)
+		result = pbots_calc.calc(request.body + ":ATs","","",1000000)
 		if result:
 			return HttpResponse(str(result))
 		else:
